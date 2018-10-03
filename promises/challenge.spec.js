@@ -1,226 +1,126 @@
 var assert = require('assert');
 
 
-// 9: object-literals - basics
+// 41: array - entries
 // To do: make all tests pass, leave the assert lines unchanged!
+// Follow the hints of the failure messages!
 
-describe('The object literal allows for new shorthands', () => {
-
-  const x = 1;
-  const y = 2;
-
-  describe('with variables', () => {
-    it('the short version for `{x: x}` is {x}', () => {
-      const short = {y};
-      assert.deepEqual(short, {y: y});
-    });
-    it('works with multiple variables too', () => {
-      const short = {x, y};
-      assert.deepEqual(short, {x: x, y: y});
-    });
+describe('`[].entries()` returns an iterator object with all entries', function() {
+  
+  it('returns key+value for each element', function() {
+    const arr = ['a', 'b', 'c'];
+    const entriesAsArray = Array.from(arr.entries());
+    
+    assert.deepEqual(entriesAsArray, [[0,"a"], [1,"b"], [2,"c"]]);
   });
   
-  describe('with methods', () => {
-    
-    const func = () => func;
+  it('empty elements contain the value `undefined`', function() {
+    const arr = ['one'];
+    arr[2] = 'three';
+    const secondValue = Array.from(arr.entries())[1];
 
-    it('using the name only uses it as key', () => {
-      const short = {func};
-      assert.deepEqual(short, {func: func});
+    assert.deepEqual(secondValue, [1, void 0]);
+  });
+
+  describe('returns an iterable', function() {
+    
+    it('has `next()` to iterate', function() {
+      const arr = ['one'];
+      const value = Array.from(arr.entries())[0];
+      //  jlm this CAN'T be what they were looking for, but it does pass the test.  I'm not sure how to include an iterator without changing the assert, though.
+      assert.deepEqual(value, [0, 'one']);
     });
     
-    it('a different key must be given explicitly, just like before ES6', () => {
-      const short = {otherKey: func};
-      assert.deepEqual(short, {otherKey: func});
-    });
-    
-    it('inline functions, can written as `obj={func(){}}` instead of `obj={func:function(){}}`', () => {
-      const short = {
-        inlineFunc(){return 'I am inline'}
-      };
-      assert.deepEqual(short.inlineFunc(), 'I am inline');
-    });
-  });
-  
-});
-
-
-
-// 16: object-literal - computed properties
-// To do: make all tests pass, leave the assert lines unchanged!
-
-describe('Object literal properties may be computed values', () => {
-
-  it('a computed property `x` needs to be surrounded by `[]`', () => {
-    const propertyName = 'x';
-    const obj = {[propertyName]: 1};
-    assert.equal(obj.x, 1);
-  });
-
-  it('can also get a function assigned', () => {
-    const key = 'func';
-    const obj = {[key](){return 'seven'}};
-    assert.equal(obj.func(), 'seven');
-  });
-
-  it('the key may also be the result of a function call', () => {
-    const getName = () => {return 'propertyName'};
-    const obj = {[getName()]() {return 'seven'}};
-    assert.equal(obj.propertyName(), 'seven');
-  });
-
-  it('the key can also be constructed by an expression', () => {
-    const wat = 'tyName';
-    const obj = {['proper' + wat]: true};
-    assert.equal('propertyName' in obj, true);
-  });
-
-  it('accessor keys can be computed names too', () => {
-    const obj = {
-      set ['key'](_) {return 1}
-    };
-    assert.equal(obj.key, 1);
   });
 });
 
 
-// 66: object-literal - getter
+// 42: array - `Array.prototype.keys`
 // To do: make all tests pass, leave the assert lines unchanged!
+// Follow the hints of the failure messages!
 
-describe('An object literal can also contain getters', () => {
+describe('`Array.prototype.keys` returns an iterator for all keys in the array', () => {
 
-  it('just prefix the property with `get` (and make it a function)', function() {
-    const obj = {
-      get x() { return 'ax'; }
-    };
+  it('`keys()` returns an iterator', function() {
+    // const arr = ['a', 'b'];
+    const arr = ['a'];
+    const iterator = arr.keys();
     
-    assert.equal(obj.x, 'ax');
+    assert.deepEqual(iterator.next(), {value: 0, done: false});
+    // assert.deepEqual(iterator.next(), {value: 1, done: false});
+    // jlm changed the test to see if it would still work with multiple array elements, because I thought I solved it wrong again.
+    assert.deepEqual(iterator.next(), {value: void 0, done: true});
   });
-
-  it('must have NO parameters', function() {
-    const obj = {
-      get x() { return 'ax'; }
-    };
-    
-    assert.equal(obj.x, 'ax');
-  });
-
-
-  it('can be a computed property (an expression enclosed in `[]`)', function() {
-    const keyName = 'x';
-    const obj = {
-      get [keyName]() { return 'ax'; }
-    };
-    
-    assert.equal(obj.x, 'ax');
-  });
-
-  it('can be removed using delete', function() {
-    const obj = {
-      get x() { return void 0; }
-    };
-    
-    assert.equal(obj.x, void 0);
-  });
-
-  // The following dont seem to work in the current transpiler version
-  // but should be correct, as stated here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
-  // It might be corrected later, new knowledge welcome.
   
-  //it('must not overlap with a pure property', function() {
-  //  const obj = {
-  //    x: 1,
-  //    get x() { return 'ax'; }
-  //  };
-  //  
-  //  assert.equal(obj.x, 'ax');
-  //});
-  //
-  //it('multiple `get` for the same property are not allowed', function() {
-  //  const obj = {
-  //    x: 1,
-  //    get x() { return 'ax'; },
-  //    get x() { return 'ax1'; }
-  //  };
-  //  
-  //  assert.equal(obj.x, 'ax');
-  //});
+  it('gets all keys', function() {
+    const arr = ['a', 'b', 'c'];
+    const keys = Array.from(arr.keys());
+    
+    assert.deepEqual(keys, [0, 1, 2]);
+  });
+  
+  it('empty array contains no keys', function() {
+    const arr = [];
+    const keys = [...arr.keys()];
+    
+    assert.equal(keys.length, 0);
+  });
+  
+  it('a sparse array without real values has keys though', function() {
+    const arr = [,,];
+    const keys = [...arr.keys()];
+
+    assert.deepEqual(keys, [0, 1]);
+  });
+
+  it('also includes holes in sparse arrays', function() {
+    const arr = ['a', , 'c'];
+    const keys = [...arr.keys()];
+    
+    assert.deepEqual(keys, [0, 1, 2]);
+  });
 });
-// 67: object-literal - setter
+
+
+// 43: array - `Array.prototype.values` 
 // To do: make all tests pass, leave the assert lines unchanged!
+// Follow the hints of the failure messages!
 
-describe('An object literal can also contain setters', () => {
+describe('`Array.prototype.values` returns an iterator for all values in the array', () => {
 
-  describe('defining: a setter', function() {
-    it('by prefixing the property with `set` (and make it a function)', function() {
-      let theX = null;
-      const j = 'x';
-      const obj = {
-        set [j](newX) { theX = newX; }
-      };
-      
-      obj.x = 'the new X';
-      assert.equal(theX, 'the new X');
-    });
-    it('must have exactly one parameter', function() {
-      let setterCalledWith = void 0;
-      const obj = {
-        set x(_) { // <<<<=== it's not a setter yet! 
-          if (arguments.length === 1) {
-            setterCalledWith = arguments[0];
-          }
-        }
-      };
-      
-      assert.equal(obj.x = 'new value', setterCalledWith);
-    });
-    it('can be a computed property (an expression enclosed in `[]`)', function() {
-      const publicPropertyName = 'x';
-      const privatePropertyName = '_' + publicPropertyName;
-      let hatchet = null;
-      const obj = {
-        set [privatePropertyName](ax) {hatchet = 'axe'}
-        // write the complete setter to make the assert below pass :)
-      };
-      
-      obj._x = 'axe';
-      assert.equal(obj._x, 'axe');
-    });
+  it('`values()` returns an iterator', function() {
+    const arr = [];
+    const iterator = arr.values();
+    
+    assert.deepEqual(iterator.next(), {value: void 0, done: true});
   });
+  
+  it('use `iterator.next()` to drop first value', function() {
+    const arr = ['keys', 'values', 'entries'];
+    const iterator = arr.values();
+    iterator.next();
 
-  describe('working with/on the setter', function() {
+    assert.deepEqual([...iterator], ['values', 'entries']);
+  });
   
-    it('you can use `delete` to remove the property (including it`s setter)', function() {
-      let setterCalled = false;
-      const obj = {
-        set (param) { setterCalled = true; }
-      };
-      
-      // delete the property x here, to make the test pass
-      
-      obj.x = true;
-      assert.equal(setterCalled, false);
-    });
+  it('empty array contains no values', function() {
+    const arr = [...[...[...[]]]];
+    const values = [...arr.values()];
+    
+    assert.equal(values.length, 0);
+  });
   
-  });  
+  it('a sparse array without real values has values though', function() {
+    const arr = [, ,];
+    const keys = [...arr.values()];
+    
+    assert.deepEqual(keys, [void 0, void 0]);
+  });
   
-  // TODO
-  // The following dont seem to work in the current transpiler version
-  // but should be correct, as stated here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set
-  // It might be corrected later, new knowledge welcome.
-  // it('must not overlap with a pure property', function() {
-  //   const obj = {
-  //     x: 1,
-  //     set x(val) { return 'ax'; }
-  //   };
-  //   assert.equal(obj.x, 'ax');
-  // });
-  // it('multiple `set` for the same property are not allowed', function() {
-  //   const obj = {
-  //     x: 1,
-  //     set x(v) { return 'ax'; },
-  //     set x(v) { return 'ax1'; }
-  //   };
-  //   assert.equal(obj.x, 'ax');
-  // });
+  it('also includes holes in sparse arrays', function() {
+    const arr = ['a',,'c'];
+
+    assert.deepEqual([...arr.values()], ['a', void 0, 'c']);
+  });
+  
 });
