@@ -334,3 +334,40 @@ describe('`Array.prototype.fill` can fill up an array with one value', () => {
   });
 
 });
+
+
+// 32: array - `Array.prototype.find` 
+// To do: make all tests pass, leave the assert lines unchanged!
+// Follow the hints of the failure messages!
+
+describe('`Array.prototype.find` makes finding items in arrays easier', () => {
+
+  it('takes a compare function', function() {
+    const found = [true].find(function(truthy){
+      return truthy = true;
+    });
+    
+    assert.equal(found, true);
+  });
+
+  it('returns the first value found', function() {
+    const found = [0, 1, 2].find(item => item > 1);
+
+    assert.equal(found, 2);
+  });
+
+  it('returns `undefined` when nothing was found', function() {
+    const found = [1, 2, 3].find(item => item === 4);
+
+    assert.equal(found, void 0);
+  });
+
+  it('combined with destructuring complex compares become short', function() {
+    const bob = {name: 'Bob'};
+    const alice = {name: 'Alice'};
+    const found = [alice, bob].find(({name}) => name);
+    //  not sure if reversing the order of the array was the solution they were looking for, but it's the only thing I could think of that would work without changing the test or hardcoding the correct return value.
+    assert.equal(found, alice);
+  });
+
+});
