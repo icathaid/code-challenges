@@ -92,7 +92,7 @@ describe('a Promise represents an operation that hasn`t completed yet, but is ex
     
     });
   });
-  //  I can clear the error by changing line 86 to reject(), or by removing reject from the arguments in line 85, but I'm not really sure why either method works.
+  //  jlm I can clear the error by changing line 84 to reject(), or by removing reject from the arguments in line 83, but I'm not really sure why either method works.
 
   // 76: Promise - creation 
 // To do: make all tests pass, leave the assert lines unchanged!
@@ -516,7 +516,7 @@ describe('Arrow functions', function() {
   it('are shorter to write, instead of `function(){}` write `() => {}`', function() {
     // var func = function(){};
     var func = '() => {}';
-    //  this only works in single quotes...why?  this assigns its value as a string instead of a function
+    //  jlm this only works in single quotes...why?  this assigns its value as a string instead of a function
     assert.equal('' + func, '() => {}');
   });
   it('instead `{}` use an expression, as return value', function() {
@@ -992,7 +992,7 @@ describe('`Array.prototype.find` makes finding items in arrays easier', () => {
     const bob = {name: 'Bob'};
     const alice = {name: 'Alice'};
     const found = [alice, bob].find(({name}) => name);
-    //  not sure if reversing the order of the array was the solution they were looking for, but it's the only thing I could think of that would work without changing the test or hardcoding the correct return value.
+    //  jlm not sure if reversing the order of the array was the solution they were looking for, but it's the only thing I could think of that would work without changing the test or hardcoding the correct return value.
     assert.equal(found, alice);
   });
 
