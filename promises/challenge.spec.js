@@ -509,3 +509,120 @@ describe('`catch()` returns a Promise and deals with rejected cases only', () =>
   });
 
 });
+
+// 5: arrow functions - basics
+// To do: make all tests pass, leave the asserts unchanged!
+
+describe('Arrow functions', function() {
+  it('are shorter to write, instead of `function(){}` write `() => {}`', function() {
+    // var func = function(){};
+    var func = '() => {}';
+    //  this only works in single quotes...why?  this assigns its value as a string instead of a function
+    assert.equal('' + func, '() => {}');
+  });
+  it('instead `{}` use an expression, as return value', function() {
+    var func = () => {return 'I return too'};
+    assert.equal(func(), 'I return too');
+  });
+  it('one parameter can be written without parens', () => {
+    var func = p => p - 1;
+    assert.equal(func(25), 24);
+  });
+  it('many params require parens', () => {
+    var func = (param1, param2) => {return param1 + param2};
+    assert.equal(func(23, 42), 23+42);
+  });
+  it('the function body needs parens to return an object', () => {
+    var func = () => ({iAm: 'an object'});
+    assert.deepEqual(func(), {iAm: 'an object'});
+  });
+});
+
+
+// 7: block scope - let
+// To do: make all tests pass, leave the asserts unchanged!
+
+describe('`let` restricts the scope of the variable to the current block', () => {
+
+  describe('`let` vs. `var`', () => {
+
+    it('`var` works as usual', () => {
+      if (true) {
+        var varX = true;
+      }
+      assert.equal(varX, true);
+    });
+    
+    it('`let` restricts scope to inside the block', () => {
+      if (true) {
+        let letX = true;
+      }
+      assert.throws(() => console.log(letX));
+    });
+    
+  });
+
+  describe('`let` usage', () => {
+    
+    it('`let` use in `for` loops', () => {
+      let obj = {x: 1};
+      for (let key in obj) {}
+      assert.throws(() => console.log(key));
+    });
+    
+    it('create artifical scope, using curly braces', () => {
+      {
+        let letX = true;
+      }
+      assert.throws(() => console.log(letX));
+    });
+    
+  });
+  
+});
+
+
+// 8: block scope - const
+// To do: make all tests pass, leave the asserts unchanged!
+
+describe('`const` is like `let` plus read-only', () => {
+
+  describe('scalar values are read-only', () => {
+
+    it('number', () => {
+      const constNum = 0;
+      // constNum = 1;
+      assert.equal(constNum, 0);
+    });
+
+    it('string', () => {
+      const constString = 'I am a const';
+      // constString = 'Cant change you?';
+      assert.equal(constString, 'I am a const');
+    });
+
+  });
+  
+  const notChangeable = 23;
+
+  it('const scope leaks too', () => {
+    assert.equal(notChangeable, 23);
+  });
+  
+  describe('complex types are NOT fully read-only', () => {
+
+    it('array', () => {
+      const arr = [42, 23];
+      // arr[0] = 0;
+      assert.equal(arr[0], 42);
+    });
+    
+    it('object', () => {
+      const obj = {x: 1};
+      obj.x = 3;
+      assert.equal(obj.x, 3);
+    });
+    
+  });
+
+});
