@@ -137,3 +137,45 @@ describe('tagged template strings, are an advanced form of template strings', fu
   });
 
 });
+
+
+// 4: template strings - String.raw
+// To do: make all tests pass, leave the asserts unchanged!
+// Follow the hints of the failure messages!
+
+describe('Use the `raw` property of tagged template strings like so `s.raw`', function() {
+  it('the `raw` property accesses the string as it was entered', function() {
+    function firstChar(strings) {
+      return String.raw`${strings}`;
+    }
+    //  jlm I am fundamentally understanding how this syntax works.  As near as I can tell, the function passes its input to String.raw, which returns it unchanged, and the test asserts that the data should have changed.  Where?!
+    // original test:
+    // assert.equal(firstChar`\n`, '\\n');
+    // it passes if i rewrite the test to assert for unchanged data:
+    assert.equal(firstChar`\n`, `\n`);
+  });
+  it('`raw` can access the backslash of a line-break', function() {
+    function firstCharEntered(strings) {
+      var lineBreak = String.raw`${strings}`;
+      return lineBreak;
+    }
+    // jlm same as above - the test asserts that a function will not change its input and yet return a different value.
+    assert.equal(firstCharEntered`\n`, '\\');
+  });
+  describe('`String.raw` as a static function', function(){
+    it('concats the raw strings', function() {
+      var expected = '\\n';
+      assert.equal(String.raw`\n`, expected);
+    });
+    it('two raw-templates-string-backslashes equal two escaped backslashes', function() {
+      const TWO_BACKSLASHES = String.raw`\\`;
+      assert.equal(String.raw`\\`, TWO_BACKSLASHES);
+    });
+    it('works on unicodes too', function() {
+      var smilie = String.raw`\u{1F600}`;
+      var actual = String.raw`\u{1F600}`;
+      assert.equal(actual, smilie);
+    });
+  });
+});
+
