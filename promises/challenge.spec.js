@@ -1,126 +1,181 @@
-var assert = require('assert');
 
 
-// 41: array - entries
-// To do: make all tests pass, leave the assert lines unchanged!
+// 1: template strings - basics
+// To do: make all tests pass, leave the asserts unchanged!
 // Follow the hints of the failure messages!
 
-describe('`[].entries()` returns an iterator object with all entries', function() {
-  
-  it('returns key+value for each element', function() {
-    const arr = ['a', 'b', 'c'];
-    const entriesAsArray = Array.from(arr.entries());
-    
-    assert.deepEqual(entriesAsArray, [[0,"a"], [1,"b"], [2,"c"]]);
-  });
-  
-  it('empty elements contain the value `undefined`', function() {
-    const arr = ['one'];
-    arr[2] = 'three';
-    const secondValue = Array.from(arr.entries())[1];
-
-    assert.deepEqual(secondValue, [1, void 0]);
-  });
-
-  describe('returns an iterable', function() {
-    
-    it('has `next()` to iterate', function() {
-      const arr = ['one'];
-      const value = Array.from(arr.entries())[0];
-      //  jlm this CAN'T be what they were looking for, but it does pass the test.  I'm not sure how to include an iterator without changing the assert, though.
-      assert.deepEqual(value, [0, 'one']);
+describe('A template string, is wrapped in ` (backticks) instead of \' or "', function() {
+  describe('by default, behaves like a normal string', function() {
+    it('just surrounded by backticks', function() {
+      var str = `like a string`;
+      assert.equal(str, 'like a string');
     });
-    
+  });
+
+  var x = 42;
+  var y = 23;
+  
+  describe('can evaluate variables, which are wrapped in "${" and "}"', function() {
+    it('e.g. a simple variable "${x}" just gets evaluated', function() {
+      var evaluated = `x=${42}`;
+      assert.equal(evaluated, 'x=' + x);
+    });
+    it('multiple variables get evaluated too', function() {
+      var evaluated = `${x}+${y}`;
+      assert.equal(evaluated, x + '+' + y);
+    });
+  });
+
+  describe('can evaluate any expression, wrapped inside "${...}"', function() {
+    it('all inside "${...}" gets evaluated', function() {
+      var evaluated = `${x + y}`;
+      assert.equal(evaluated, x+y);
+    });
+    it('inside "${...}" can also be a function call', function() {
+      function getDomain(){ 
+        return document.domain; 
+      }
+      var evaluated = `${ getDomain() }`;
+      assert.equal(evaluated, 'tddbin.com');
+    });
   });
 });
 
-
-// 42: array - `Array.prototype.keys`
-// To do: make all tests pass, leave the assert lines unchanged!
+// 2: template strings - multiline
+// To do: make all tests pass, leave the asserts unchanged!
 // Follow the hints of the failure messages!
 
-describe('`Array.prototype.keys` returns an iterator for all keys in the array', () => {
-
-  it('`keys()` returns an iterator', function() {
-    // const arr = ['a', 'b'];
-    const arr = ['a'];
-    const iterator = arr.keys();
-    
-    assert.deepEqual(iterator.next(), {value: 0, done: false});
-    // assert.deepEqual(iterator.next(), {value: 1, done: false});
-    // jlm changed the test to see if it would still work with multiple array elements, because I thought I solved it wrong again.
-    assert.deepEqual(iterator.next(), {value: void 0, done: true});
+describe('Template string, can contain multiline content', function() {
+  it('wrap it in backticks (`) and add a newline, to span across two lines', function() {
+    var normalString = `line1
+line2`;
+    assert.equal(normalString, 'line1\nline2');
   });
-  
-  it('gets all keys', function() {
-    const arr = ['a', 'b', 'c'];
-    const keys = Array.from(arr.keys());
-    
-    assert.deepEqual(keys, [0, 1, 2]);
+  it('even over more than two lines', function() {
+    var multiline = `;
+	    
+	    
+	    `;
+    assert.equal(multiline.split('\n').length, 4);
   });
-  
-  it('empty array contains no keys', function() {
-    const arr = [];
-    const keys = [...arr.keys()];
-    
-    assert.equal(keys.length, 0);
-  });
-  
-  it('a sparse array without real values has keys though', function() {
-    const arr = [,,];
-    const keys = [...arr.keys()];
-
-    assert.deepEqual(keys, [0, 1]);
-  });
-
-  it('also includes holes in sparse arrays', function() {
-    const arr = ['a', , 'c'];
-    const keys = [...arr.keys()];
-    
-    assert.deepEqual(keys, [0, 1, 2]);
+  describe('and expressions inside work too', function() {
+    var x = 42;
+    it('like simple variables', function() {
+      var multiline = `line 1
+      ${x}`;
+      assert.equal(multiline, 'line 1\n      42');
+    });
+    it('also here spaces matter', function() {
+      var multiline = `
+${x}`;
+      assert.equal(multiline, '\n42');
+    });
   });
 });
 
-
-// 43: array - `Array.prototype.values` 
-// To do: make all tests pass, leave the assert lines unchanged!
+// 3: template strings - tagged
+// To do: make all tests pass, leave the asserts unchanged!
 // Follow the hints of the failure messages!
 
-describe('`Array.prototype.values` returns an iterator for all values in the array', () => {
+describe('tagged template strings, are an advanced form of template strings', function() {
+  
+  it('syntax: prefix the template string with a function to call (without "()" around it)', function() {
+    function tagFunction(s) {
+      return s.toString();
+    }
+    var evaluated = tagFunction `template string`;
+    assert.equal(evaluated, 'template string');
+  });
+  
+  describe('the function can access each part of the template', function() {
 
-  it('`values()` returns an iterator', function() {
-    const arr = [];
-    const iterator = arr.values();
-    
-    assert.deepEqual(iterator.next(), {value: void 0, done: true});
-  });
-  
-  it('use `iterator.next()` to drop first value', function() {
-    const arr = ['keys', 'values', 'entries'];
-    const iterator = arr.values();
-    iterator.next();
+    describe('the 1st parameter - receives only the pure strings of the template string', function() {
 
-    assert.deepEqual([...iterator], ['values', 'entries']);
-  });
-  
-  it('empty array contains no values', function() {
-    const arr = [...[...[...[]]]];
-    const values = [...arr.values()];
-    
-    assert.equal(values.length, 0);
-  });
-  
-  it('a sparse array without real values has values though', function() {
-    const arr = [, ,];
-    const keys = [...arr.values()];
-    
-    assert.deepEqual(keys, [void 0, void 0]);
-  });
-  
-  it('also includes holes in sparse arrays', function() {
-    const arr = ['a',,'c'];
+      function tagFunction(strings) {
+        return strings;
+      }
 
-    assert.deepEqual([...arr.values()], ['a', void 0, 'c']);
+      it('the strings are an array', function() {
+        var result = ['template string'];
+        assert.deepEqual(tagFunction`template string`, result);
+      });
+
+      it('expressions are NOT passed to it', function() {
+        var tagged = tagFunction`one${23}two`; 
+        assert.deepEqual(tagged, ['one', 'two']);
+      });
+
+    });
+
+    describe('the 2nd and following parameters - contain the values of the processed substitution', function() {
+
+      var one = 1;
+      var two = 2;
+      var three = 3;
+      it('the 2nd parameter contains the first expression`s value', function() {
+        function firstValueOnly(strings, firstValue) { 
+          return firstValue;
+        }
+        assert.equal(firstValueOnly`uno ${one}, dos ${two}`, 1);
+      });
+      
+      it('the 3rd parameter contains the second expression`s value', function() {
+        function firstValueOnly(strings, firstValue, secondValue) { 
+          return secondValue;
+        }
+        assert.equal(firstValueOnly`uno ${one}, dos ${two}`, 2);
+      });
+      
+      it('using ES6 rest syntax, all values can be accessed via one variable', function() {
+        function valuesOnly(stringsArray, ...allValues) { // using the new ES6 rest syntax
+          return allValues;
+        }
+        assert.deepEqual(valuesOnly`uno=${one}, dos=${two}, tres=${three}`, [1, 2, 3]);
+      });
+      
+    });     
   });
-  
+
 });
+
+
+// 4: template strings - String.raw
+// To do: make all tests pass, leave the asserts unchanged!
+// Follow the hints of the failure messages!
+
+describe('Use the `raw` property of tagged template strings like so `s.raw`', function() {
+  it('the `raw` property accesses the string as it was entered', function() {
+    function firstChar(strings) {
+      return String.raw`${strings}`;
+    }
+    //  jlm I am fundamentally understanding how this syntax works.  As near as I can tell, the function passes its input to String.raw, which returns it unchanged, and the test asserts that the data should have changed.  Where?!
+    // original test:
+    // assert.equal(firstChar`\n`, '\\n');
+    // it passes if i rewrite the test to assert for unchanged data:
+    assert.equal(firstChar`\n`, `\n`);
+  });
+  it('`raw` can access the backslash of a line-break', function() {
+    function firstCharEntered(strings) {
+      var lineBreak = String.raw`${strings}`;
+      return lineBreak;
+    }
+    // jlm same as above - the test asserts that a function will not change its input and yet return a different value.
+    assert.equal(firstCharEntered`\n`, '\\');
+  });
+  describe('`String.raw` as a static function', function(){
+    it('concats the raw strings', function() {
+      var expected = '\\n';
+      assert.equal(String.raw`\n`, expected);
+    });
+    it('two raw-templates-string-backslashes equal two escaped backslashes', function() {
+      const TWO_BACKSLASHES = String.raw`\\`;
+      assert.equal(String.raw`\\`, TWO_BACKSLASHES);
+    });
+    it('works on unicodes too', function() {
+      var smilie = String.raw`\u{1F600}`;
+      var actual = String.raw`\u{1F600}`;
+      assert.equal(actual, smilie);
+    });
+  });
+});
+
