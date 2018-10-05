@@ -1,93 +1,71 @@
-var assert = require('assert');
-// 63: String - `includes()` 
+// 71: String - `repeat()` 
 // To do: make all tests pass, leave the assert lines unchanged!
 // Follow the hints of the failure messages!
 
-describe('`string.includes()` finds string within another string', function() {
+describe('`str.repeat(x)` appends `x` copies of `str` to each other and returns it', function() {
 
-    describe('find a single character', function() {
-      it('in a three char string', function() {
-        const searchString = 'x';
-        assert.equal('xyz'.includes(searchString), true);
-      });
-      it('reports false if character was not found', function() {
-        const expected = false;
-        assert.equal('xyz'.includes('abc'), expected);
-      });
+  describe('pass the count to `str.repeat(count)`', function() {
+    it('for `1` the string stays the same', function() {
+      const what = 'one'.repeat(1);
+      assert.equal(what, 'one');
+    });
+    it('for `3` the string `x` becomes `xxx`', function() {
+      const actual = 'x'.repeat(3);
+      assert.equal(actual, 'xxx');
+    });
+    it('for `0` an empty string is returned', function() {
+      const dontRepeat = 'a string'.repeat(0);
+      assert.equal('shrink'.repeat(dontRepeat), '');
     });
     
-    describe('find a string', function() {
-      it('that matches exactly', function() {
-        const findSome = (str) => 'xyz'.includes(str);
-        assert.equal(findSome('xyz'), true);
-      });
+    it('the count is not an int, such as "3", it gets coerced to an int', function() {
+      const repeated = 'three'.repeat('3');
+      assert.equal(repeated, 'threethreethree');
     });
-    
-    describe('search for an empty string, is always true', function() {
-      it('in an empty string', function() {
-        const emptyString = '';
-        assert.equal(''.includes(emptyString), true);
-      });
-      it('in `abc`', function() {
-        const actual = 'abc'.includes('');
-        assert.equal(actual, true);
-      });
+  });
+
+  describe('throws an error for', function() {
+    it('a count of <0', function() {
+      const belowZero = -1;
+      assert.throws(() => { ''.repeat(belowZero); }, RangeError);
     });
-  
-    describe('special/corner cases', function() {
-      it('search for `undefined` in a string fails', function() {
-        const findInAbc = (what) => 'abc'.includes(what);
-        assert.equal(findInAbc(void 0), false);
-      });
-      it('searches case-sensitive', function() {
-        const findInAbc = (what) => 'abc'.includes(what);
-        assert.equal(findInAbc('A'), false);
-      });
-      it('must NOT be a regular expression', function() {
-        const regExp = /([A-Z])/;
-        assert.throws(() => {''.includes(regExp)});
-      });
-      describe('coerces the searched "thing" into a string', function() {
-        it('e.g. from a number', function() {
-          const actual = '123'.includes(3);
-          assert.equal(actual, true);
-        });
-        it('e.g. from an array', function() {
-          const actual = '1,2,3'.includes([1,2,3]);
-          assert.equal(actual, true);
-        });
-        it('e.g. from an object, with a `toString()` method', function() {
-          const objWithToString = toString({toString: 123});
-          
-          assert.equal('123'.includes(objWithToString), true);
-        });
-      });
+    it('a count of +Infinty', function() {
+      let infinity = Infinity;
+      assert.throws(() => { ''.repeat(infinity); }, RangeError);
     });
-    
-    describe('takes a position from where to start searching', function() {
-      it('does not find `a` after position 1 in `abc`', function() {
-        const position = 1;
-        assert.equal('abc'.includes('a', position), false);
-      });
-      it('even the position gets coerced', function() {
-        const findAtPosition = () => 'xyz'.includes('z'); 
-        assert.equal(findAtPosition('2'), true);
-      });
-      describe('invalid positions get converted to 0', function() {
-        it('e.g. `undefined`', function() {
-          const findAtPosition = (pos) => 'xyz'.includes('x', pos); 
-          assert.equal(findAtPosition(void 0), true);
-        });
-        it('negative numbers', function() {
-          const findAtPosition = (pos) => 'xyz'.includes('x', pos); 
-          assert.equal(findAtPosition(-2), true);
-        });
-        it('NaN', function() {
-          const findAtPosition = (pos) => 'xyz'.includes('x', pos); 
-          assert.equal(findAtPosition(NaN), true);
-        });
-      });
-    });
-  
   });
   
+  describe('accepts everything that can be coerced to a string', function() {
+    it('e.g. a boolean', function() {
+      let aBool = false;
+      assert.equal(String.prototype.repeat.call(aBool, 2), 'falsefalse');
+    });
+    it('e.g. a number', function() {
+      let aNumber = '1';
+      assert.equal(String.prototype.repeat.call(aNumber, 2), '11');
+    });
+  });
+
+  describe('for my own (string) class', function() {
+    it('calls `toString()` to make it a string', function() {
+      class MyString { toString() { return 'my string'; } }
+      
+      const expectedString = '';
+      
+      assert.equal(String(new MyString()).repeat(1), expectedString);
+    });
+    it('`toString()` is only called once', function() {
+      let counter = 1;
+      class X {
+        toString() {
+          return counter++;
+        }
+      }
+      
+      let repeated = new X().repeat(2);
+      
+      assert.equal(repeated, '11');
+    });
+  });
+  
+});
