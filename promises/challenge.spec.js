@@ -1,70 +1,66 @@
-// 71: String - `repeat()` 
+var assert = require('assert');
+
+// 72: String - `startsWith()` 
 // To do: make all tests pass, leave the assert lines unchanged!
 // Follow the hints of the failure messages!
 
-describe('`str.repeat(x)` appends `x` copies of `str` to each other and returns it', function() {
+describe('`str.startsWith(searchString)` determines whether `str` begins with `searchString`.', function() {
 
-  describe('pass the count to `str.repeat(count)`', function() {
-    it('for `1` the string stays the same', function() {
-      const what = 'one'.repeat(1);
-      assert.equal(what, 'one');
+  const s = 'the string s';
+
+  describe('1st parameter, the string to search for', function() {
+    it('works with just a character', function() {
+      const actual = s.startsWith('t');
+      assert.equal(actual, true);
     });
-    it('for `3` the string `x` becomes `xxx`', function() {
-      const actual = 'x'.repeat(3);
-      assert.equal(actual, 'xxx');
+    it('works with a string', function() {
+      const expected = s.startsWith('the');
+      assert.equal(s.startsWith('the'), expected);
     });
-    it('for `0` an empty string is returned', function() {
-      const dontRepeat = 'a string'.repeat(0);
-      assert.equal('shrink'.repeat(dontRepeat), '');
+    it('works with unicode characters', function() {
+      const nuclear = '☢ NO';
+      assert.equal(nuclear.startsWith('☢'), true);
     });
-    
-    it('the count is not an int, such as "3", it gets coerced to an int', function() {
-      const repeated = 'three'.repeat('3');
-      assert.equal(repeated, 'threethreethree');
+    it('a regular expression throws a TypeError', function() {
+      const aRegExp = /abc/;
+      assert.throws(() => {''.startsWith(aRegExp)}, TypeError);
     });
   });
 
-  describe('throws an error for', function() {
-    it('a count of <0', function() {
-      const belowZero = -1;
-      assert.throws(() => { ''.repeat(belowZero); }, RangeError);
+  describe('2nd parameter, the position where to start searching from', function() {
+    it('find "str" at position 4', function() {
+      const position = 4;
+      assert.equal(s.startsWith('str', position), true);
     });
-    it('a count of +Infinty', function() {
-      let infinity = Infinity;
-      assert.throws(() => { ''.repeat(infinity); }, RangeError);
+    it('`undefined` is the same as 0', function() {
+      const _undefined_ = undefined;
+      assert.equal(s.startsWith('the', _undefined_), true);
+    });
+    it('the parameter gets coerced to an int', function() {
+      const position = '4';
+      assert.equal(s.startsWith('str', position), true);
+    });
+    it('a value larger than the string`s length, returns false', function() {
+      const expected = false;
+      assert.equal(s.startsWith(' ', s.length + 1), expected);
     });
   });
   
-  describe('accepts everything that can be coerced to a string', function() {
+  describe('transfer the functionality to other objects', function() {
+    
+    const startsWith = (...args) => String.prototype.startsWith.call(...args);
+    
     it('e.g. a boolean', function() {
-      let aBool = false;
-      assert.equal(String.prototype.repeat.call(aBool, 2), 'falsefalse');
+      let aBool = true;
+      assert.equal(startsWith(!aBool, 'false'), true);
     });
     it('e.g. a number', function() {
-      let aNumber = '1';
-      assert.equal(String.prototype.repeat.call(aNumber, 2), '11');
+      let aNumber = '19';
+      assert.equal(startsWith(aNumber + 84, '1984'), true);
     });
-  });
-
-  describe('for my own (string) class', function() {
-    it('calls `toString()` to make it a string', function() {
-      class MyString { toString() { return 'my string'; } }
-      
-      const expectedString = 'my string';
-      
-      assert.equal(String(new MyString()).repeat(1), expectedString);
-    });
-    it('`toString()` is only called once', function() {
-      let counter = 1;
-      class X {
-        toString() {
-          return counter++;
-        }
-      }
-      
-      let repeated = new X().repeat(2);
-      
-      assert.equal(repeated, '11');
+    it('also using the position works', function() {
+      const position = 1;
+      assert.equal(startsWith(1994, '99', position), true);
     });
   });
   
