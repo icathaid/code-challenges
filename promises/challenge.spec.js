@@ -50,7 +50,7 @@ describe('`str.repeat(x)` appends `x` copies of `str` to each other and returns 
     it('calls `toString()` to make it a string', function() {
       class MyString { toString() { return 'my string'; } }
       
-      const expectedString = '';
+      const expectedString = 'my string';
       
       assert.equal(String(new MyString()).repeat(1), expectedString);
     });
